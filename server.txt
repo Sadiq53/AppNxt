@@ -1,0 +1,262 @@
+post route for projects 
+
+const express = require("express");
+const router = express.Router();
+
+// Multer Middleware for Handling File Uploads
+const uploadMultiple = upload.fields([
+  { name: "mainBanner", maxCount: 1 },
+  { name: "banners", maxCount: 10 },
+]);
+
+router.post("/api/projects", uploadMultiple, async (req, res) => {
+  try {
+    // Extract files from the request
+    const { mainBanner, banners } = req.files;
+
+    // Main Banner
+    const mainBannerDetails = mainBanner
+      ? {
+          key: mainBanner[0].key,
+          url: mainBanner[0].location,
+        }
+      : null;
+
+    // Banners
+    const bannersDetails = banners
+      ? banners.map((banner) => ({
+          key: banner.key,
+          url: banner.location,
+        }))
+      : [];
+
+    // Extract form data
+    const { name, date, heading, content } = req.body;
+
+    // Save to Database (example, replace with actual DB logic)
+    const project = {
+      name,
+      date,
+      heading,
+      mainBanner: mainBannerDetails,
+      banners: bannersDetails,
+      content: JSON.parse(content), // Content should be sent as a JSON string from the frontend
+    };
+
+    console.log("Project Data to Save:", project);
+
+    // Send Response
+    res.status(200).json({
+      message: "Project created successfully",
+      data: project,
+    });
+  } catch (error) {
+    console.error("Error in /api/projects:", error);
+    res.status(500).json({ message: "Failed to create project", error });
+  }
+});
+
+module.exports = router;
+
+
+
+post route for work process
+
+
+const express = require("express");
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+const AWS = require("aws-sdk");
+const router = express.Router();
+
+// Configure AWS S3
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+});
+
+// Multer configuration for S3
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: "your-s3-bucket-name",
+    acl: "public-read",
+    key: function (req, file, cb) {
+      const folder = `work-process/${file.fieldname}`;
+      const fileName = `${Date.now()}-${file.originalname}`;
+      cb(null, `${folder}/${fileName}`);
+    },
+  }),
+});
+
+// API Route to handle form submission
+router.post("/work-process", upload.fields([
+    { name: "step1[banner]", maxCount: 1 },
+    { name: "step2[banner]", maxCount: 1 },
+    { name: "step3[banner]", maxCount: 1 },
+    { name: "step4[banner]", maxCount: 1 },
+  ]), async (req, res) => {
+  try {
+    // Extract data
+    const description = req.body.description;
+    const step1 = {
+      title: req.body["step1[title]"],
+      description: req.body["step1[description]"],
+      banner: req.files["step1[banner]"]?.[0]?.location || null,
+      key: req.files["step1[banner]"]?.[0]?.key || null,
+    };
+    const step2 = {
+      title: req.body["step2[title]"],
+      description: req.body["step2[description]"],
+      banner: req.files["step2[banner]"]?.[0]?.location || null,
+      key: req.files["step2[banner]"]?.[0]?.key || null,
+    };
+    const step3 = {
+      title: req.body["step3[title]"],
+      description: req.body["step3[description]"],
+      banner: req.files["step3[banner]"]?.[0]?.location || null,
+      key: req.files["step3[banner]"]?.[0]?.key || null,
+    };
+    const step4 = {
+      title: req.body["step4[title]"],
+      description: req.body["step4[description]"],
+      banner: req.files["step4[banner]"]?.[0]?.location || null,
+      key: req.files["step4[banner]"]?.[0]?.key || null,
+    };
+
+    // Combine data
+    const workProcess = {
+      description,
+      steps: { step1, step2, step3, step4 },
+    };
+
+    // Save workProcess to your database here...
+
+    res.status(200).json({
+      message: "Work process saved successfully",
+      data: workProcess,
+    });
+  } catch (error) {
+    console.error("Error saving work process:", error);
+    res.status(500).json({ message: "Error saving work process", error });
+  }
+});
+
+module.exports = router;
+
+
+post route for Slider 
+
+const express = require("express");
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+const AWS = require("aws-sdk");
+const { v4: uuidv4 } = require("uuid");
+const mongoose = require("mongoose");
+
+const router = express.Router();
+
+// Configure AWS S3
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+});
+
+const s3 = new AWS.S3();
+
+// Mongoose Schema for Slider
+const sliderSchema = new mongoose.Schema({
+  position: Number, // Image position (1-7)
+  key: String,      // S3 key
+  url: String,      // S3 URL
+});
+
+const Slider = mongoose.model("Slider", sliderSchema);
+
+// Multer S3 configuration for uploads
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.AWS_BUCKET_NAME, // Replace with your bucket name
+    acl: "public-read",
+    metadata: (req, file, cb) => {
+      cb(null, { fieldName: file.fieldname });
+    },
+    key: (req, file, cb) => {
+      const uniqueKey = `sliders/${uuidv4()}-${file.originalname}`;
+      cb(null, uniqueKey);
+    },
+  }),
+});
+
+// Delete image from S3
+const deleteFromS3 = async (key) => {
+  try {
+    await s3.deleteObject({
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: key,
+    }).promise();
+  } catch (error) {
+    console.error("Error deleting from S3:", error);
+  }
+};
+
+// Route to upload/update slider images
+router.post("/upload-slider", upload.fields([
+  { name: "image1" }, { name: "image2" }, { name: "image3" },
+  { name: "image4" }, { name: "image5" }, { name: "image6" }, { name: "image7" },
+]), async (req, res) => {
+  try {
+    const files = req.files;
+    if (!files || Object.keys(files).length === 0) {
+      return res.status(400).json({ message: "No images uploaded" });
+    }
+
+    const updatedSliderData = [];
+
+    // Iterate through each position (1-7)
+    for (let i = 1; i <= 7; i++) {
+      const fieldName = `image${i}`;
+      if (files[fieldName]) {
+        const file = files[fieldName][0];
+
+        // Find the existing image in the database by position
+        const existingImage = await Slider.findOne({ position: i });
+
+        // If an existing image is found, delete it from S3
+        if (existingImage) {
+          await deleteFromS3(existingImage.key);
+        }
+
+        // Save new image details
+        const newImage = {
+          position: i,
+          key: file.key,
+          url: file.location,
+        };
+
+        // Upsert (update if exists, otherwise insert)
+        await Slider.findOneAndUpdate({ position: i }, newImage, { upsert: true });
+        updatedSliderData.push(newImage);
+      } else {
+        // If no new image is uploaded for this position, retain the existing one
+        const existingImage = await Slider.findOne({ position: i });
+        if (existingImage) {
+          updatedSliderData.push(existingImage);
+        }
+      }
+    }
+
+    res.status(200).json({
+      message: "Slider updated successfully!",
+      data: updatedSliderData.sort((a, b) => a.position - b.position), // Ensure sequential order
+    });
+  } catch (error) {
+    console.error("Error updating slider:", error);
+    res.status(500).json({ message: "Failed to update slider", error });
+  }
+});
+
+module.exports = router;

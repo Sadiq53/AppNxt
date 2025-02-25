@@ -1,0 +1,273 @@
+.navbar-vertical.navbar-expand-xs .navbar-collapse {
+    height: 100% !important;
+}
+
+::-webkit-scrollbar {
+    background-color: #aaa;
+    border-radius: 10px;
+    width: 8px;
+    height: 10px;
+}
+
+.main-layout {
+    display: grid;
+    grid-template-columns: max-content auto;
+}
+
+.navbar-vertical.navbar-expand-xs{
+    position: static !important
+}
+
+.sidenav.fixed-start~.main-content{
+    margin-left: 0 !important;
+    max-width: 100%;
+    overflow-x: clip;
+}
+
+.navbar-vertical.navbar-expand-xs.fixed-start {
+    ::-webkit-scrollbar{
+        display: none !important;
+    }
+}
+
+.navbar-expand-lg .navbar-collapse{
+    justify-content: end;
+}
+
+.flex-cs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.flex-cs.header {
+    justify-content: space-between !important;
+}
+
+.project-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    padding: 8px;
+    border-radius: 10px;
+    text-decoration: none !important;
+
+    img {
+        width: 100%;
+        height: 500px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+    
+    .img {
+        border-radius: 10px;
+        border: 1px dashed #aaaaaab6;
+        width: 100%;
+        height: 500px;
+
+    }
+
+    .footer {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 5px;
+        padding: 10px;
+    }
+}
+.w-100 {
+    width: 100% !important;
+}
+
+.projects-banners {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: end;
+    gap: 20px;
+    .layout {
+        border: 1px dashed #aaaaaab6;
+        height: 300px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+}
+
+.cs-btn {
+    border: none;
+    border-radius: 50%;
+    background-color: transparent;
+}
+
+.projects-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: end;
+    gap: 20px;
+    .layout {
+        width: 100%;
+    }
+
+}
+
+.divider {
+    background-color: #aaaaaab6;
+    width: 100%;
+    height: 1px;
+    margin: 30px 0;
+
+}
+
+/* Add this attribute to the element that needs a tooltip */
+[data-tooltip] {
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+  }
+  
+  /* Hide the tooltip content by default */
+  [data-tooltip]:before,
+  [data-tooltip]:after {
+    visibility: hidden;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=0);
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  /* Position tooltip above the element */
+  [data-tooltip]:before {
+    position: absolute;
+    bottom: 150%;
+    left: 50%;
+    margin-bottom: 5px;
+    margin-left: -80px;
+    padding: 7px;
+    width: 160px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background-color: #000;
+    background-color: hsla(0, 0%, 20%, 0.9);
+    color: #fff;
+    content: attr(data-tooltip);
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+  
+  /* Triangle hack to make tooltip look like a speech bubble */
+  [data-tooltip]:after {
+    position: absolute;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -5px;
+    width: 0;
+    border-top: 5px solid #000;
+    border-top: 5px solid hsla(0, 0%, 20%, 0.9);
+    border-right: 5px solid transparent;
+    border-left: 5px solid transparent;
+    content: " ";
+    font-size: 0;
+    line-height: 0;
+  }
+  
+  /* Show tooltip content on hover */
+  [data-tooltip]:hover:before,
+  [data-tooltip]:hover:after {
+    visibility: visible;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+    filter: progid: DXImageTransform.Microsoft.Alpha(Opacity=100);
+    opacity: 1;
+  }
+
+  .hide-me{
+    position: absolute;
+    right: -400%;
+  }
+
+  .grid-cs{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .gtc-1-2{
+    grid-template-columns: 1fr 2fr !important;
+  }
+
+  .preview-img {
+    width: 100%;
+    
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+  }
+
+
+.cs-modal-width {
+    max-width: 2000px !important;
+    width: 1000px !important;
+}
+
+.work-process-card {
+    padding: 10px 0;
+    display: grid;
+    align-items: center;
+    grid-template-columns: 1fr 3fr;
+    gap: 10px;
+    
+    .part1 {
+        cursor: pointer;
+        border: 1px dashed #aaaaaab6;   
+        min-height: 200px;
+        border-radius: 10px;
+        img{
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+    }
+    
+    
+}
+.slider-img {
+    cursor: pointer;
+    border: 1px dashed #aaaaaab6;   
+    height: 350px;
+    width: 280px;
+    border-radius: 10px;
+    img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+}
+
+.main-slider-layout {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr ;
+    align-items: center;
+    gap: 30px;
+}
+
+.gtc-3{
+    grid-template-columns: 1fr 1fr 1fr !important;
+}
